@@ -1,0 +1,1 @@
+export async function fetchJson(url:string, ms=7000){const c=new AbortController(); const t=setTimeout(()=>c.abort(),ms); try{const r=await fetch(url,{signal:c.signal,cache:'no-store'}); if(!r.ok) throw new Error(String(r.status)); return await r.json();} finally{clearTimeout(t);} }
