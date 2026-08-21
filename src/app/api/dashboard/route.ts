@@ -1,2 +1,3 @@
-import { NextResponse } from 'next/server';import { loadSnapshots } from '@/lib/storage';import { computeDashboardModel } from '@/lib/scoring';import { mockIndicators } from '@/lib/data-sources/mock';
-export async function GET(){const snaps=await loadSnapshots(); if(snaps.length) return NextResponse.json(snaps[0]); return NextResponse.json(computeDashboardModel(mockIndicators()));}
+import { NextResponse } from 'next/server';import { getDashboardModel } from '@/lib/model';
+export const revalidate = 300;
+export async function GET(){return NextResponse.json(await getDashboardModel());}

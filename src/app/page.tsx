@@ -1,15 +1,14 @@
-import { loadSnapshots } from '@/lib/storage';
-import { computeDashboardModel } from '@/lib/scoring';
-import { mockIndicators } from '@/lib/data-sources/mock';
+import { getDashboardModel } from '@/lib/model';
 import { ScoreCard } from '@/components/dashboard/ScoreCard';
 import { MarketCard } from '@/components/dashboard/MarketCard';
 import { SectionCard } from '@/components/ui/SectionCard';
 import { StressBarChart } from '@/components/charts/StressBarChart';
 import { SourceStatusChart } from '@/components/charts/SourceStatusChart';
 
+export const revalidate = 300;
+
 export default async function Page() {
-  const snapshots = await loadSnapshots();
-  const d = snapshots[0] ?? computeDashboardModel(mockIndicators());
+  const d = await getDashboardModel();
 
   const stress = [
     { name: 'Rates', value: d.ratesStressScore }, { name: 'Inflation', value: d.inflationStressScore },

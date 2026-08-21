@@ -1,10 +1,11 @@
-import { computeDashboardModel } from '@/lib/scoring';
-import { mockIndicators } from '@/lib/data-sources/mock';
+import { getDashboardModel } from '@/lib/model';
 import { generateDailyBrief } from '@/lib/ai';
 import { SectionCard } from '@/components/ui/SectionCard';
 
+export const revalidate = 300;
+
 export default async function DailyBrief() {
-  const model = computeDashboardModel(mockIndicators());
+  const model = await getDashboardModel();
   const brief = await generateDailyBrief(model);
   const isFallback = !process.env.GEMINI_API_KEY;
 
