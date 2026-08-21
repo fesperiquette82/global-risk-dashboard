@@ -32,7 +32,7 @@ export function computeDashboardModel(indicators: Indicator[]): DashboardModel {
   const crypto = clamp100(Math.max(0, -btc7 * 4));
   const commod = clamp100(Math.max(0, oil - 70));
   const market = clamp100((rates + growth + crypto) / 3);
-  const global = clamp100((rates + infl + growth + geoS + crypto + commod + market) / 7);
+  const global = clamp100(Math.max(rates, infl, growth, geoS, crypto, commod, market));
 
   const regime = global < 30 ? 'Risk-on' : global < 45 ? 'Normal' : global < 60 ? 'Fragile' : global < 75 ? 'Stress élevé' : 'Crise';
   const liveCount = indicators.filter((i) => i.status === 'live').length;
