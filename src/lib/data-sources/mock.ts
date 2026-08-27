@@ -7,8 +7,9 @@ export const macroMockIndicators = (): Indicator[] => [
   { id: 'us2y', label: 'US 2Y Yield', category: 'rates', value: 4.65, unit: '%', date: now(), source: 'mock', status: 'mock', change7d: 0.05 },
   { id: 'yield_spread_10y_2y', label: '10Y-2Y Spread', category: 'growth', value: -0.35, unit: 'pp', date: now(), source: 'mock', status: 'mock' },
   { id: 'unemployment', label: 'US Unemployment', category: 'growth', value: 4.1, unit: '%', date: now(), source: 'mock', status: 'mock', change30d: 0.1 },
-  { id: 'cpi', label: 'US CPI', category: 'inflation', value: 314.2, unit: 'index', date: now(), source: 'mock', status: 'mock' },
-  { id: 'vix_proxy', label: 'VIX Proxy', category: 'volatility', value: 19, unit: 'index', date: now(), source: 'mock', status: 'mock', change7d: 2 },
+  { id: 'cpi_yoy', label: 'US CPI (YoY)', category: 'inflation', value: 3.1, unit: '%', date: now(), source: 'mock', status: 'mock' },
+  { id: 'vix', label: 'VIX (CBOE)', category: 'volatility', value: 19, unit: 'index', date: now(), source: 'mock', status: 'mock', change7d: 2 },
+  { id: 'credit_spread_hy', label: 'US High Yield OAS', category: 'credit', value: 3.8, unit: 'pp', date: now(), source: 'mock', status: 'mock' },
 ];
 
 export const cryptoMockIndicators = (): Indicator[] => [
