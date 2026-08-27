@@ -1,4 +1,4 @@
-import { DashboardModel, Indicator, MarketCard } from '@/lib/types';
+import { AssetSignal, DashboardModel, Indicator, MarketCard, MarketSentiment, SentimentLabel } from '@/lib/types';
 
 const get = (i: Indicator[], id: string) => i.find((x) => x.id === id)?.value ?? null;
 export const clamp100 = (n: number) => Math.max(0, Math.min(100, Math.round(n)));
@@ -64,4 +64,22 @@ export function computeDashboardModel(indicators: Indicator[]): DashboardModel {
     negativeDrivers: [oil > 85 ? 'Pétrole en hausse' : '', spread < 0 ? 'Courbe inversée' : ''].filter(Boolean),
     indicators,
   };
+}
+
+// Analog to CNN's Fear & Greed Index, built from real signals already fetched
+// elsewhere in this app (not a scrape of CNN's page — see docs/SPEC-decision-support.md).
+// CNN uses 7 factors we don't have free data for (put/call ratio, market breadth,
+// safe-haven flows...); this uses the 3 we do: volatility, credit spread, momentum.
+export function computeMarketSentiment(model: DashboardModel, momentumTicker?: AssetSignal): MarketSentiment {
+  const vix = model.indicators.find((i) => i.id === 'vix')?.value ?? 20;
+  const volatility = clamp100(100 - (vix - 12) * 4);
+  const credit = clamp100(100 - model.creditStressScore);
+  const priceVsSma50 = momentumTicker?.priceVsSma50Pct ?? 0;
+  const momentum = clamp100(50 + priceVsSma50 * 5);
+
+  const score = clamp100((volatility + credit + momentum) / 3);
+  const label: SentimentLabel =
+    score < 25 ? 'Peur extrême' : score < 45 ? 'Peur' : score <= 55 ? 'Neutre' : score <= 75 ? 'Avidité' : 'Avidité extrême';
+
+  return { score, label, components: { volatility, credit, momentum } };
 }

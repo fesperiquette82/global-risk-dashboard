@@ -23,3 +23,10 @@ export type AssetSignal = {
   status: DataSourceStatus;
   asOf: string | null;
 };
+
+export type SentimentLabel = "Peur extrême" | "Peur" | "Neutre" | "Avidité" | "Avidité extrême";
+export type MarketSentiment = {
+  score: number;
+  label: SentimentLabel;
+  components: { volatility: number; credit: number; momentum: number };
+};

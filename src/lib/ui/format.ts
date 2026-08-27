@@ -1,4 +1,4 @@
-import { DataSourceStatus } from '@/lib/types';
+import { DataSourceStatus, SentimentLabel } from '@/lib/types';
 
 export const regimeColor = (regime: string) => {
   switch (regime) {
@@ -20,3 +20,13 @@ export const statusColor = (status: DataSourceStatus) =>
   'bg-red-100 text-red-700';
 
 export const pct = (v: number | null | undefined) => (v ?? 0).toFixed(1);
+
+export const sentimentColor = (label: SentimentLabel) => {
+  switch (label) {
+    case 'Peur extrême': return 'bg-red-100 text-red-700';
+    case 'Peur': return 'bg-orange-100 text-orange-700';
+    case 'Neutre': return 'bg-slate-100 text-slate-700';
+    case 'Avidité': return 'bg-emerald-100 text-emerald-700';
+    default: return 'bg-emerald-200 text-emerald-800';
+  }
+};

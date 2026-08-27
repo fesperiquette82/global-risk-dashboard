@@ -1,6 +1,9 @@
 import { getDashboardModel } from '@/lib/model';
+import { fetchAssetSignals } from '@/lib/data-sources/equities';
+import { computeMarketSentiment } from '@/lib/scoring';
 import { ScoreCard } from '@/components/dashboard/ScoreCard';
 import { MarketCard } from '@/components/dashboard/MarketCard';
+import { SentimentCard } from '@/components/dashboard/SentimentCard';
 import { SectionCard } from '@/components/ui/SectionCard';
 import { StressBarChart } from '@/components/charts/StressBarChart';
 import { SourceStatusChart } from '@/components/charts/SourceStatusChart';
@@ -8,7 +11,8 @@ import { SourceStatusChart } from '@/components/charts/SourceStatusChart';
 export const revalidate = 300;
 
 export default async function Page() {
-  const d = await getDashboardModel();
+  const [d, signals] = await Promise.all([getDashboardModel(), fetchAssetSignals()]);
+  const sentiment = computeMarketSentiment(d, signals.find((s) => s.ticker === 'SPY'));
 
   const stress = [
     { name: 'Rates', value: d.ratesStressScore }, { name: 'Inflation', value: d.inflationStressScore },
@@ -21,7 +25,10 @@ export default async function Page() {
 
   return <main className='space-y-4'>
     <h1 className='text-2xl font-semibold'>Macro Risk Radar</h1>
-    <ScoreCard model={d} />
+    <div className='grid gap-4 md:grid-cols-2'>
+      <ScoreCard model={d} />
+      <SentimentCard sentiment={sentiment} />
+    </div>
 
     <div className='grid gap-3 md:grid-cols-2 lg:grid-cols-3'>{d.marketCards.map((m) => <MarketCard key={m.market} card={m} />)}</div>
 
