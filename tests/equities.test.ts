@@ -38,7 +38,7 @@ describe('watchlistTickers', () => {
 
 describe('fetchAssetSignals', () => {
   it('returns mock signals for every ticker when no API key is configured', async () => {
-    const signals = await fetchAssetSignals();
+    const signals = await fetchAssetSignals(0);
     expect(signals).toHaveLength(5);
     expect(signals.every((s) => s.status === 'mock' && s.price === null)).toBe(true);
   });
@@ -52,7 +52,7 @@ describe('fetchAssetSignals', () => {
       if (url.includes('function=OVERVIEW')) return Promise.resolve({ ok: true, json: async () => ({ Name: 'Test Corp', PERatio: '22.5', DividendYield: '0.015', '52WeekHigh': '160', '52WeekLow': '95' }) });
       return Promise.resolve({ ok: true, json: async () => ({ 'Time Series (Daily)': dailySeries }) });
     }));
-    const [signal] = await fetchAssetSignals();
+    const [signal] = await fetchAssetSignals(0);
     expect(signal.status).toBe('live');
     expect(signal.name).toBe('Test Corp');
     expect(signal.peRatio).toBe(22.5);
@@ -65,7 +65,26 @@ describe('fetchAssetSignals', () => {
     process.env.ALPHA_VANTAGE_API_KEY = 'k';
     process.env.PORTFOLIO_TICKERS = 'TEST';
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true, json: async () => ({}) }));
-    const [signal] = await fetchAssetSignals();
+    const [signal] = await fetchAssetSignals(0);
     expect(signal.status).toBe('mock');
+  });
+
+  it('fetches tickers one at a time instead of bursting - Alpha Vantage silently rate-limits parallel bursts', async () => {
+    process.env.ALPHA_VANTAGE_API_KEY = 'k';
+    process.env.PORTFOLIO_TICKERS = 'AAA,BBB';
+    let concurrent = 0;
+    let maxConcurrent = 0;
+    vi.stubGlobal('fetch', vi.fn(async () => {
+      concurrent++;
+      maxConcurrent = Math.max(maxConcurrent, concurrent);
+      await Promise.resolve();
+      concurrent--;
+      return { ok: true, json: async () => ({}) };
+    }));
+    const signals = await fetchAssetSignals(0);
+    expect(signals).toHaveLength(2);
+    // 2 concurrent calls per ticker (OVERVIEW + TIME_SERIES_DAILY) is expected;
+    // 4 (both tickers at once) would mean the burst is back.
+    expect(maxConcurrent).toBeLessThanOrEqual(2);
   });
 });
