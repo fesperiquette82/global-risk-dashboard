@@ -34,6 +34,15 @@ export default function Methodology() {
       </tbody></table>
     </SectionCard>
     <SectionCard title='Module Portefeuille'>Les signaux par ticker (tendance, momentum, volatilité réalisée, P/E, dividende) sont calculés à partir de données réelles (Alpha Vantage), rafraîchies une fois par jour pour respecter le quota gratuit de 25 requêtes/jour. Ce sont des faits observés, pas des prévisions.</SectionCard>
+    <SectionCard title='Sentiment de marché'>
+      <p className='text-sm'>Indicateur maison inspiré du CNN Fear &amp; Greed Index, mais <strong>ce n&apos;est pas une donnée CNN</strong> — CNN n&apos;expose aucune API publique, et scraper leur page serait fragile et contraire à leurs conditions d&apos;utilisation. Ce score est recalculé à partir de 3 signaux réels déjà utilisés ailleurs dans le dashboard :</p>
+      <ul className='list-disc pl-5 text-sm space-y-1 mt-1'>
+        <li><strong>Volatilité</strong> : VIX (FRED), calme (VIX≈12) = avidité, panique (VIX≈37) = peur.</li>
+        <li><strong>Crédit</strong> : spread High Yield (FRED), l&apos;inverse du score de stress de crédit.</li>
+        <li><strong>Momentum</strong> : position du prix de SPY par rapport à sa moyenne mobile 50 jours (Alpha Vantage).</li>
+      </ul>
+      <p className='text-sm mt-1'>CNN utilise 7 facteurs (dont le ratio put/call et la largeur de marché) pour lesquels aucune API gratuite fiable n&apos;est disponible ici — ce score n&apos;est donc pas directement comparable à l&apos;indice CNN, juste un signal de même inspiration construit sur des données réelles.</p>
+    </SectionCard>
     <SectionCard title="Ce que ce dashboard ne fait pas">
       <ul className='list-disc pl-5 text-sm space-y-1'>
         <li>Pas de backtesting ni de validation statistique du pouvoir prédictif du score.</li>
