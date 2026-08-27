@@ -14,6 +14,7 @@ export default async function Page() {
     { name: 'Rates', value: d.ratesStressScore }, { name: 'Inflation', value: d.inflationStressScore },
     { name: 'Growth', value: d.growthStressScore }, { name: 'Market', value: d.marketStressScore },
     { name: 'Geo', value: d.geopoliticalStressScore }, { name: 'Crypto', value: d.cryptoRiskScore }, { name: 'Commo', value: d.commodityRiskScore },
+    { name: 'Credit', value: d.creditStressScore },
   ];
   const statusMap = d.indicators.reduce<Record<string, number>>((acc, x) => ({ ...acc, [x.status]: (acc[x.status] ?? 0) + 1 }), { live: 0, mock: 0, stale: 0, error: 0 });
   const statusData = Object.entries(statusMap).map(([name, value]) => ({ name, value }));
