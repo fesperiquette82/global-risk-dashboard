@@ -81,9 +81,22 @@ async function fetchTicker(ticker: string, key: string): Promise<AssetSignal> {
   }
 }
 
-export async function fetchAssetSignals(): Promise<AssetSignal[]> {
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+// Alpha Vantage's free tier throttles bursts (it replies 200 OK with a "Note"/
+// "Information" body instead of an HTTP error, so a burst looks like "no data"
+// to fetchTicker and silently falls back to mock for every ticker at once).
+// Fetching the watchlist in parallel triggered exactly that in production, so
+// tickers are fetched one at a time with a gap between them.
+export async function fetchAssetSignals(staggerMs = 800): Promise<AssetSignal[]> {
   const key = process.env.ALPHA_VANTAGE_API_KEY;
   const tickers = watchlistTickers();
   if (!key) return tickers.map(mockSignal);
-  return Promise.all(tickers.map((t) => fetchTicker(t, key)));
+
+  const signals: AssetSignal[] = [];
+  for (let i = 0; i < tickers.length; i++) {
+    signals.push(await fetchTicker(tickers[i], key));
+    if (i < tickers.length - 1) await sleep(staggerMs);
+  }
+  return signals;
 }
