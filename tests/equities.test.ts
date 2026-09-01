@@ -30,7 +30,7 @@ describe('equities math helpers', () => {
 
 describe('watchlistTickers', () => {
   it('defaults to a broad ETF set and parses a custom comma-separated list', () => {
-    expect(watchlistTickers()).toEqual(['SPY', 'QQQ', 'VTI', 'IWM', 'EFA']);
+    expect(watchlistTickers()).toEqual(['SPY', 'QQQ', 'VTI']);
     process.env.PORTFOLIO_TICKERS = ' aapl, msft ,,';
     expect(watchlistTickers()).toEqual(['AAPL', 'MSFT']);
   });
@@ -39,7 +39,7 @@ describe('watchlistTickers', () => {
 describe('fetchAssetSignals', () => {
   it('returns mock signals for every ticker when no API key is configured', async () => {
     const signals = await fetchAssetSignals(0);
-    expect(signals).toHaveLength(5);
+    expect(signals).toHaveLength(3);
     expect(signals.every((s) => s.status === 'mock' && s.price === null)).toBe(true);
   });
 

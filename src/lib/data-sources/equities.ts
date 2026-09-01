@@ -1,7 +1,11 @@
 import { AssetSignal, TrendLabel } from '@/lib/types';
 import { fetchJson, ALPHA_VANTAGE_REVALIDATE_SECONDS } from './utils';
 
-const DEFAULT_TICKERS = ['SPY', 'QQQ', 'VTI', 'IWM', 'EFA'];
+// Kept small on purpose: each ticker costs 2 Alpha Vantage calls, and the free
+// tier is 25 req/day shared with WTI (1 call) - 3 tickers leaves headroom for
+// several page revalidations/redeploys per day without silently falling back
+// to mock. Widen via PORTFOLIO_TICKERS if your usage allows it: (n*2)+1 <= 25.
+const DEFAULT_TICKERS = ['SPY', 'QQQ', 'VTI'];
 
 export function watchlistTickers(): string[] {
   const raw = process.env.PORTFOLIO_TICKERS;

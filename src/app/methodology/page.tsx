@@ -33,7 +33,16 @@ export default function Methodology() {
         <tr><td>75–100</td><td>Crise</td></tr>
       </tbody></table>
     </SectionCard>
-    <SectionCard title='Module Portefeuille'>Les signaux par ticker (tendance, momentum, volatilité réalisée, P/E, dividende) sont calculés à partir de données réelles (Alpha Vantage), rafraîchies une fois par jour pour respecter le quota gratuit de 25 requêtes/jour. Ce sont des faits observés, pas des prévisions.</SectionCard>
+    <SectionCard title='Module Portefeuille'>Les signaux par ticker (tendance, momentum, volatilité réalisée, P/E, dividende) sont calculés à partir de données réelles (Alpha Vantage), rafraîchies une fois par jour pour respecter le quota gratuit de 25 requêtes/jour. Watchlist par défaut : SPY, QQQ, VTI (personnalisable via <code>PORTFOLIO_TICKERS</code>). Ce sont des faits observés, pas des prévisions.</SectionCard>
+    <SectionCard title='Pourquoi les dates diffèrent selon les indicateurs'>
+      <p className='text-sm'>Chaque source publie à son propre rythme réel — ce n&apos;est pas un dysfonctionnement :</p>
+      <ul className='list-disc pl-5 text-sm space-y-1 mt-1'>
+        <li><strong>CPI (inflation)</strong> : publication mensuelle avec ~1 à 2 mois de décalage, c&apos;est la norme aux États-Unis.</li>
+        <li><strong>Taux, VIX, spread de crédit</strong> : mis à jour chaque jour ouvré par FRED.</li>
+        <li><strong>Bitcoin / Ethereum</strong> : quasi temps réel via CoinGecko.</li>
+        <li><strong>Pétrole (WTI) et module Portefeuille</strong> : rafraîchis au plus une fois par jour, pour rester sous le quota gratuit Alpha Vantage — peuvent repasser en <code>mock</code> temporairement si le quota du jour est épuisé (ex: plusieurs déploiements rapprochés). Cela se résout automatiquement au renouvellement quotidien du quota.</li>
+      </ul>
+    </SectionCard>
     <SectionCard title='Sentiment de marché'>
       <p className='text-sm'>Indicateur maison inspiré du CNN Fear &amp; Greed Index, mais <strong>ce n&apos;est pas une donnée CNN</strong> — CNN n&apos;expose aucune API publique, et scraper leur page serait fragile et contraire à leurs conditions d&apos;utilisation. Ce score est recalculé à partir de 3 signaux réels déjà utilisés ailleurs dans le dashboard :</p>
       <ul className='list-disc pl-5 text-sm space-y-1 mt-1'>
