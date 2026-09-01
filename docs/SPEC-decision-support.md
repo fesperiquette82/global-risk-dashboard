@@ -123,3 +123,9 @@ export type AssetSignal = {
 ## 10. Limites qui resteront vraies après ce v1 (à ne pas oublier)
 
 Même après implémentation : les probabilités "hausse/baisse" façon prévision n'existeront plus (remplacées par des faits), le score macro reste une heuristique non backtestée, et rien ici ne remplace une analyse fondamentale ou un conseil financier réel. Le disclaimer existant sur le site doit rester.
+
+## 11. Mise à jour post-déploiement — watchlist réduite à 3 tickers
+
+Observé en production : le WTI (déjà en place, indépendant de ce module) est repassé en `mock` après plusieurs déploiements rapprochés le même jour. Cause probable : chaque déploiement Vercel peut relancer les fetchs Alpha Vantage à froid, et 3 déploiements × 11 appels (1 WTI + 5 tickers × 2) dépasse largement les 25 requêtes/jour du tier gratuit.
+
+Watchlist par défaut réduite à `SPY,QQQ,VTI` (6 appels + 1 WTI = 7/cycle), pour laisser de la marge lors d'itérations rapprochées. Personnalisable via `PORTFOLIO_TICKERS` en respectant `(n × 2) + 1 ≤ 25`.
